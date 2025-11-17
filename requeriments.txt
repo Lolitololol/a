@@ -1,5 +1,3 @@
 streamlit
 pandas
-matplotlib
-ploty
-numpy
+matplotlib==3.8.0
