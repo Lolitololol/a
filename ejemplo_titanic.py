@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+
 
 # Carga el archivo CSV "database_titanic.csv" en un DataFrame de pandas.
 df = pd.read_csv("database_titanic.csv")
@@ -23,12 +24,21 @@ with st.sidebar:
     # Muestra el valor actual del slider en la barra lateral.
     st.write("Bins=", div)
 
-# Desplegamos un histograma con los datos del eje X
-fig, ax = plt.subplots(1, 2, figsize=(10, 3))
-ax[0].hist(df["Age"], bins=div)
-ax[0].set_xlabel("Edad")
-ax[0].set_ylabel("Frecuencia")
-ax[0].set_title("Histograma de edades")
+fig = px.histogram(
+    df, 
+    x="Age", 
+    nbins=div,             # Número de bins igual que 'bins' en matplotlib
+    title="Histograma de edades", 
+    labels={"Age": "Edad"}, 
+    color_discrete_sequence=["skyblue"]  # Color opcional
+)
+
+fig.update_layout(
+    yaxis_title="Frecuencia"
+)
+
+# Mostramos el gráfico en Streamlit
+st.plotly_chart(fig)
 
 # Tomando datos para hombres y contando la cantidad
 df_male = df[df["Sex"] == "male"]
@@ -38,13 +48,21 @@ cant_male = len(df_male)
 df_female = df[df["Sex"] == "female"]
 cant_female = len(df_female)
 
-ax[1].bar(["Masculino", "Femenino"], [cant_male, cant_female], color = "red")
-ax[1].set_xlabel("Sexo")
-ax[1].set_ylabel("Cantidad")
-ax[1].set_title('Distribución de hombres y mujeres')
+sexo = ["Masculino", "Femenino"]
+cantidad = [cant_male, cant_female]
 
-# Desplegamos el gráfico
-st.pyplot(fig)
+# Crear gráfico de barras
+fig2 = px.bar(
+    x=sexo,
+    y=cantidad,
+    labels={"x": "Sexo", "y": "Cantidad"},
+    title="Distribución de hombres y mujeres",
+    color=sexo,                # opcional: colores distintos
+    color_discrete_sequence=["blue", "red"]
+)
+
+# Mostrar en Streamlit
+st.plotly_chart(fig2)
 
 st.write("""
 ## Muestra de datos cargados
